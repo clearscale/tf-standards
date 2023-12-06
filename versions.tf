@@ -1,12 +1,4 @@
 #
-# Specify which provider(s) this module requires.
-# https://developer.hashicorp.com/terraform/language/providers/configuration
-#
-provider "aws" {
-  region = var.region
-}
-
-#
 # Set providers and versions.
 # These values must be hardcoded. We can't use variables here.
 # https://developer.hashicorp.com/terraform/language/providers/requirements
