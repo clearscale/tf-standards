@@ -1,13 +1,16 @@
 locals {
   # Setup the dot notation variables.
-  prefix_dot_init = {
-    prefix   = replace(title(replace(local.var_prefix,      "-", " ")), " ", "")
-    name     = replace(title(replace(local.var_name,        "-", " ")), " ", "")
-    region   = local.out_region.short_title_lower
-    env      = replace(title(replace(local.out_env,         "-", " ")), " ", "")
-    resource = replace(title(replace(local.prefix_resource, "-", " ")), " ", "")
-    function = replace(title(replace(local.prefix_function, "-", " ")), " ", "")
+  prefix_dot_init_raw = {
+    prefix   = replace(lower(replace(local.var_prefix,      "-", " ")), "_", " ")
+    name     = replace(lower(replace(local.var_name,        "-", " ")), "_", " ")
+    region   = lower(local.out_region.short_title_lower)
+    env      = replace(lower(replace(local.out_env,         "-", " ")), "_", " ")
+    resource = replace(lower(replace(local.prefix_resource, "-", " ")), "_", " ")
+    function = replace(lower(replace(local.prefix_function, "-", " ")), "_", " ")
   }
+
+  prefix_dot_title = { for key, value in local.prefix_dot_init_raw : key => replace(title(value), " ", "") }
+  prefix_dot_init  = { for key, value in local.prefix_dot_init_raw : key => replace(title(value), " ", "") }
 
   # Full name in dot notation.
   prefix_dot_full = {
@@ -50,28 +53,28 @@ locals {
   # Partial: resource name variations in dot notation.
   prefix_dot_resource = {
     default = {
-      name   = replace(local.proc_resource,        "-", ".")
-      title  = replace(title(local.proc_resource), "-", ".")
-      upper  = replace(upper(local.proc_resource), "-", ".")
-      lower  = replace(lower(local.proc_resource), "-", ".")
-      lookup = lookup(local.lookups, local.proc_resource,
+      name   = replace(local.prefix_dot_init.resource,        "-", ".")
+      title  = replace(local.prefix_dot_title.resource,       "-", ".")
+      upper  = replace(upper(local.prefix_dot_init.resource), "-", ".")
+      lower  = replace(lower(local.prefix_dot_init.resource), "-", ".")
+      lookup = lookup(local.lookups, local.prefix_dot_init.resource,
         {
-          title = title(local.proc_resource),
-          dash  = replace(replace(local.proc_resource, " ", "-"), "_", "-")
-          dot   = replace(replace(local.proc_resource, " ", "."), "_", ".")
+          title = local.prefix_dot_init.resource
+          dash  = replace(replace(local.prefix_dot_init.resource, " ", "-"), "_", "-")
+          dot   = replace(replace(local.prefix_dot_init.resource, " ", "."), "_", ".")
         }
       )
     }
     processed = {
-      name   = replace(local.prefix_resource,        "-", ".")
-      title  = replace(title(local.prefix_resource), "-", ".")
-      upper  = replace(upper(local.prefix_resource), "-", ".")
-      lower  = replace(lower(local.prefix_resource), "-", ".")
-      lookup = lookup(local.lookups, local.prefix_resource,
+      name   = replace(local.prefix_dot_init.resource,        "-", ".")
+      title  = replace(local.prefix_dot_title.resource,       "-", ".")
+      upper  = replace(upper(local.prefix_dot_init.resource), "-", ".")
+      lower  = replace(lower(local.prefix_dot_init.resource), "-", ".")
+      lookup = lookup(local.lookups, local.prefix_dot_init.resource,
         {
-          title = title(local.prefix_resource),
-          dash  = replace(replace(local.prefix_resource, " ", "-"), "_", "-")
-          dot   = replace(replace(local.prefix_resource, " ", "."), "_", ".")
+          title = replace(local.prefix_dot_title.resource,        "-", "."),
+          dash  = replace(replace(local.prefix_dot_init.resource, " ", "-"), "_", "-")
+          dot   = replace(replace(local.prefix_dot_init.resource, " ", "."), "_", ".")
         }
       )
     }
@@ -80,28 +83,28 @@ locals {
   # Partial: function name variations in dot notation.
   prefix_dot_function = {
     default = {
-      name   = replace(local.proc_function,        "-", ".")
-      title  = replace(title(local.proc_function), "-", ".")
-      upper  = replace(upper(local.proc_function), "-", ".")
-      lower  = replace(lower(local.proc_function), "-", ".")
-      lookup = lookup(local.lookups, local.proc_function,
+      name   = replace(local.prefix_dot_init.function,        "-", ".")
+      title  = replace(local.prefix_dot_title.function,       "-", ".")
+      upper  = replace(upper(local.prefix_dot_init.function), "-", ".")
+      lower  = replace(lower(local.prefix_dot_init.function), "-", ".")
+      lookup = lookup(local.lookups, local.prefix_dot_init.function,
         {
-          title = title(local.proc_function),
-          dash  = replace(replace(local.proc_function, " ", "-"), "_", "-")
-          dot   = replace(replace(local.proc_function, " ", "."), "_", ".")
+          title = replace(local.prefix_dot_title.function,       "-", "."),
+          dash  = replace(replace(local.prefix_dot_init.function, " ", "-"), "_", "-")
+          dot   = replace(replace(local.prefix_dot_init.function, " ", "."), "_", ".")
         }
       )
     }
     processed = {
-      name   = replace(local.prefix_function,        "-", ".")
-      title  = replace(title(local.prefix_function), "-", ".")
-      upper  = replace(upper(local.prefix_function), "-", ".")
-      lower  = replace(lower(local.prefix_function), "-", ".")
-      lookup = lookup(local.lookups, local.prefix_function,
+      name   = replace(local.prefix_dot_init.function,        "-", ".")
+      title  = replace(local.prefix_dot_title.function,       "-", ".")
+      upper  = replace(upper(local.prefix_dot_init.function), "-", ".")
+      lower  = replace(lower(local.prefix_dot_init.function), "-", ".")
+      lookup = lookup(local.lookups, local.prefix_dot_init.function,
         {
-          title = title(local.prefix_function),
-          dash  = replace(replace(local.prefix_function, " ", "-"), "_", "-")
-          dot   = replace(replace(local.prefix_function, " ", "."), "_", ".")
+          title = replace(local.prefix_dot_title.function,        "-", "."),
+          dash  = replace(replace(local.prefix_dot_init.function, " ", "-"), "_", "-")
+          dot   = replace(replace(local.prefix_dot_init.function, " ", "."), "_", ".")
         }
       )
     }

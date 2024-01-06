@@ -24,14 +24,14 @@ locals {
 
   prefix_function = (local.proc_function == "default"
     ? ""
-    : "${local.proc_function}"
+    : "${local.function}"
   )
   prefix_resource = (local.proc_resource == "default"
     ? ((length(local.prefix_function) > 0 && local.prefix_function != "default")
       ? "default"
       : ""
     )
-    : "${local.proc_resource}"
+    : "${local.resource}"
   )
 
   out_env = lower((

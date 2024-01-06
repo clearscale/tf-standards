@@ -1,13 +1,16 @@
 locals {
   # Setup the dash notation variables.
-  prefix_dash_init = {
-    prefix   = replace(lower(replace(local.var_prefix,      "-", " ")), " ", "-")
-    name     = replace(lower(replace(local.var_name,        "-", " ")), " ", "")
+  prefix_dash_init_raw = {
+    prefix   = replace(lower(replace(local.var_prefix,      "-", " ")), "_", "-")
+    name     = replace(lower(replace(local.var_name,        "-", " ")), "_", " ")
     region   = lower(local.out_region.short_title_lower)
-    env      = replace(lower(replace(local.out_env,         "-", " ")), " ", "")
-    resource = replace(lower(replace(local.prefix_resource, "-", " ")), " ", "")
-    function = replace(lower(replace(local.prefix_function, "-", " ")), " ", "")
+    env      = replace(lower(replace(local.out_env,         "-", " ")), "_", " ")
+    resource = replace(lower(replace(local.prefix_resource, "-", " ")), "_", " ")
+    function = replace(lower(replace(local.prefix_function, "-", " ")), "_", " ")
   }
+
+  prefix_dash_title = { for key, value in local.prefix_dash_init_raw : key => replace(title(value), " ", "") }
+  prefix_dash_init  = { for key, value in local.prefix_dash_init_raw : key => replace(value, " ", "-") }
 
   # Full name variations in dash notation.
   prefix_dash_full_default = {
@@ -70,12 +73,12 @@ locals {
   prefix_dash_resource = {
     default = {
       name   = local.proc_resource
-      title  = title(local.proc_resource)
+      title  = local.prefix_dash_title.resource
       upper  = upper(local.proc_resource)
       lower  = lower(local.proc_resource)
       lookup = lookup(local.lookups, local.proc_resource,
         {
-          title = title(local.proc_resource),
+          title = local.prefix_dash_title.resource,
           dash  = replace(replace(local.proc_resource, " ", "-"), "_", "-")
           dot   = replace(replace(local.proc_resource, " ", "."), "_", ".")
         }
@@ -83,12 +86,12 @@ locals {
     }
     processed = {
       name   = local.prefix_resource
-      title  = title(local.prefix_resource)
+      title  = local.prefix_dash_title.resource
       upper  = upper(local.prefix_resource)
       lower  = lower(local.prefix_resource)
       lookup = lookup(local.lookups, local.prefix_resource,
         {
-          title = title(local.prefix_resource),
+          title = local.prefix_dash_title.resource,
           dash  = replace(replace(local.prefix_resource, " ", "-"), "_", "-")
           dot   = replace(replace(local.prefix_resource, " ", "."), "_", ".")
         }
@@ -99,28 +102,28 @@ locals {
   # Partial: function name variations in dash notation.
   prefix_dash_function = {
     default = {
-      name   = local.proc_function
-      title  = title(local.proc_function)
-      upper  = upper(local.proc_function)
-      lower  = lower(local.proc_function)
-      lookup = lookup(local.lookups, local.proc_function,
+      name   = local.prefix_dash_init.function
+      title  = local.prefix_dash_title.function
+      upper  = upper(local.prefix_dash_init.function)
+      lower  = lower(local.prefix_dash_init.function)
+      lookup = lookup(local.lookups, local.prefix_dash_init.function,
         {
-          title = title(local.proc_function),
-          dash  = replace(replace(local.proc_function, " ", "-"), "_", "-")
-          dot   = replace(replace(local.proc_function, " ", "."), "_", ".")
+          title = local.prefix_dash_title.function,
+          dash  = replace(replace(local.prefix_dash_init.function, " ", "-"), "_", "-")
+          dot   = replace(replace(local.prefix_dash_init.function, " ", "."), "_", ".")
         }
       )
     }
     processed = {
-      name   = local.prefix_function
-      title  = title(local.prefix_function)
-      upper  = upper(local.prefix_function)
-      lower  = lower(local.prefix_function)
-      lookup = lookup(local.lookups, local.prefix_function,
+      name   = local.prefix_dash_init.function
+      title  = local.prefix_dash_title.function
+      upper  = upper(local.prefix_dash_init.function)
+      lower  = lower(local.prefix_dash_init.function)
+      lookup = lookup(local.lookups, local.prefix_dash_init.function,
         {
-          title = title(local.prefix_function),
-          dash  = replace(replace(local.prefix_function, " ", "-"), "_", "-")
-          dot   = replace(replace(local.prefix_function, " ", "."), "_", ".")
+          title = local.prefix_dash_title.function,
+          dash  = replace(replace(local.prefix_dash_init.function, " ", "-"), "_", "-")
+          dot   = replace(replace(local.prefix_dash_init.function, " ", "."), "_", ".")
         }
       )
     }
