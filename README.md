@@ -24,8 +24,8 @@ module "std" {
 }
 
 locals {
-  notation_dash = names.aws.dev.general
-  notation_dot  = names.aws.dev.title
+  notation_dash = module.std.names.aws.dev.general
+  notation_dot  = module.std.names.aws.dev.title
 }
 ```
 
