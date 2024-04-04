@@ -1,4 +1,4 @@
-module github.com/clearscale/tf-context
+module github.com/clearscale/tf-standards
 
 go 1.21
 

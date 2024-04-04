@@ -48,6 +48,7 @@ locals {
     short_title       = replace(title(trimspace(replace(local.proc_region, "-", " "))), " ", "")
     short_title_lower = title(lower(replace(title(trimspace(replace(local.proc_region, "-", " "))), " ", "")))
     title             = replace(title(trimspace(replace(local.proc_region, "-", " "))), " ", "-")
+    code              = lookup(local.lookups.region, lower(trimspace(local.proc_region)), "unk")
   }
 
   # A list of generated prefixes to use across all projects, services, and resources.

@@ -3,10 +3,14 @@ locals {
   prefix_dash_init_raw = {
     prefix   = replace(lower(replace(local.var_prefix,      "-", " ")), "_", "-")
     name     = replace(lower(replace(local.var_name,        "-", " ")), "_", " ")
-    region   = lower(local.out_region.short_title_lower)
     env      = replace(lower(replace(local.out_env,         "-", " ")), "_", " ")
     resource = replace(lower(replace(local.prefix_resource, "-", " ")), "_", " ")
     function = replace(lower(replace(local.prefix_function, "-", " ")), "_", " ")
+
+    region   = ((local.out_region.code == "unk")
+      ? lower(local.out_region.short_title_lower)
+      : local.out_region.code
+    )
   }
 
   prefix_dash_title = { for key, value in local.prefix_dash_init_raw : key => replace(title(value), " ", "") }
@@ -15,11 +19,21 @@ locals {
   # Full name variations in dash notation.
   prefix_dash_full_default = {
     for k, v in {
-      default  = "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}",
-      region   = "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}",
-      resource = "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_resource.processed.lookup.title}",
-      function = "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_resource.processed.lookup.title}-${local.prefix_dash_function.processed.lookup.title}"
-    
+      default = "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}",
+      region  = "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}",
+      env = (local.prefix_dash_init.name == local.prefix_dash_init.env
+        ? "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}"
+        : "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_init.env}"
+      ),
+      resource = (local.prefix_dash_init.name == local.prefix_dash_init.env
+        ? "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_resource.processed.lookup.title}"
+        : "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_init.env}-${local.prefix_dash_resource.processed.lookup.title}"
+      ),
+      function = (local.prefix_dash_init.name == local.prefix_dash_init.env
+        ? "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_resource.processed.lookup.title}-${local.prefix_dash_function.processed.lookup.title}"
+        : "${local.prefix_dash_init.prefix}-${local.prefix_dash_init.name}-${local.prefix_dash_init.region}-${local.prefix_dash_init.env}-${local.prefix_dash_resource.processed.lookup.title}-${local.prefix_dash_function.processed.lookup.title}"
+      ),
+
       template = {
         for tk, tv in {
           default  = "${local.prefix_dash_init.prefix}-{{CONTEXT}}",

@@ -31,16 +31,14 @@ locals {
     "${local.client}-${local.project}")
   )
 
-  accounts_aws = [for aws in module.aws : {
-    provider = aws.provider
-    key      = aws.key
-    id       = aws.id
-    name     = aws.name
-    region   = aws.region
-    prefix   = aws.prefix
-  }]
+  accounts_aws = {for aws in module.aws : aws.name => {
+    general     = trim("${aws.prefix.dash.full.default.function}-${aws.suffix.dash}", "-_. ")
+    title       = trim("${aws.prefix.dot.full.function}.${aws.suffix.dot}", "-_. ")
+    region      = aws.region.default
+    region_code = aws.region.code
+  }}
 
-  accounts = {
+  names = {
     aws = local.accounts_aws
   }
 }
@@ -52,7 +50,6 @@ module "aws" {
       if lower(trimspace(a.provider)) == "aws"
   ])
 
-  providers = { aws = aws }
   prefix    = local.proc_prefix
   env       = local.env
   key       = var.accounts[count.index].key

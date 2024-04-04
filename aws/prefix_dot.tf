@@ -3,10 +3,14 @@ locals {
   prefix_dot_init_raw = {
     prefix   = replace(lower(replace(local.var_prefix,      "-", " ")), "_", " ")
     name     = replace(lower(replace(local.var_name,        "-", " ")), "_", " ")
-    region   = lower(local.out_region.short_title_lower)
     env      = replace(lower(replace(local.out_env,         "-", " ")), "_", " ")
     resource = replace(lower(replace(local.prefix_resource, "-", " ")), "_", " ")
     function = replace(lower(replace(local.prefix_function, "-", " ")), "_", " ")
+
+    region   = ((local.out_region.code == "unk")
+      ? title(local.out_region.short_title)
+      : upper(local.out_region.code)
+    )
   }
 
   prefix_dot_title = { for key, value in local.prefix_dot_init_raw : key => replace(title(value), " ", "") }

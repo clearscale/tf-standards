@@ -26,6 +26,11 @@ output "region" {
   value       = local.out_region
 }
 
+output "region_code" {
+  description = "Region code name variants."
+  value       = local.out_region.code
+}
+
 output "env" {
   description = "The updated environment name."
   value       = local.out_env
