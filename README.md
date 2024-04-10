@@ -6,7 +6,7 @@ The Terraform standards module is designed to provide a unified set of settings,
 
 ```terraform
 module "std" {
-  source =  "https://github.com/clearscale/tf-standards.git"
+  source =  "github.com/clearscale/tf-standards.git"
 
   accounts = [
     { id = "*", name = "dev",    provider = "aws", key = "current", region = "us-east-1"},
