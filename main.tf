@@ -1,12 +1,12 @@
 locals {
-  var_prefix   = replace(replace(replace(var.prefix,   "_", "-"), ".", "-"), " ", "-")
-  var_client   = replace(replace(replace(var.client,   "_", "-"), ".", "-"), " ", "-")
-  var_project  = replace(replace(replace(var.project,  "_", "-"), ".", "-"), " ", "-")
-  var_env      = replace(replace(replace(var.env,      "_", "-"), ".", "-"), " ", "-")
-  var_region   = replace(replace(replace(var.region,   "_", "-"), ".", "-"), " ", "-")
-  var_name     = replace(replace(replace(var.name,     "_", "-"), ".", "-"), " ", "-")
+  var_prefix   = replace(replace(replace(var.prefix, "_", "-"), ".", "-"), " ", "-")
+  var_client   = replace(replace(replace(var.client, "_", "-"), ".", "-"), " ", "-")
+  var_project  = replace(replace(replace(var.project, "_", "-"), ".", "-"), " ", "-")
+  var_env      = replace(replace(replace(var.env, "_", "-"), ".", "-"), " ", "-")
+  var_region   = replace(replace(replace(var.region, "_", "-"), ".", "-"), " ", "-")
+  var_name     = replace(replace(replace(var.name, "_", "-"), ".", "-"), " ", "-")
   var_function = replace(replace(replace(var.function, "_", "-"), ".", "-"), " ", "-")
-  var_suffix   = replace(replace(replace(var.suffix,   "_", "-"), ".", "-"), " ", "-")
+  var_suffix   = replace(replace(replace(var.suffix, "_", "-"), ".", "-"), " ", "-")
 
   prefix   = lower(local.var_prefix)
   client   = lower(local.var_client)
@@ -17,9 +17,9 @@ locals {
   suffix   = lower(local.var_suffix)
 
   env = lower((
-    (local.var_env  == "") ||
-    (local.var_env  == "default" && terraform.workspace == "default")
-  ) ? "dev"
+    (local.var_env == "") ||
+    (local.var_env == "default" && terraform.workspace == "default")
+    ) ? "dev"
     : local.var_env
   )
 
@@ -31,12 +31,12 @@ locals {
     "${local.client}-${local.project}")
   )
 
-  accounts_aws = {for aws in module.aws : aws.name => {
+  accounts_aws = { for aws in module.aws : aws.name => {
     general     = trim("${aws.prefix.dash.full.default.function}-${aws.suffix.dash}", "-_. ")
     title       = trim("${aws.prefix.dot.full.function}.${aws.suffix.dot}", "-_. ")
     region      = aws.region.default
     region_code = aws.region.code
-  }}
+  } }
 
   names = {
     aws = local.accounts_aws
@@ -45,27 +45,18 @@ locals {
 
 module "aws" {
   source = "./aws"
-  count  = length([
+  count = length([
     for a in try(var.accounts, []) : a
-      if lower(trimspace(a.provider)) == "aws"
+    if lower(trimspace(a.provider)) == "aws"
   ])
 
-  prefix    = local.proc_prefix
-  env       = local.env
-  key       = var.accounts[count.index].key
-  id        = var.accounts[count.index].id
-  name      = var.accounts[count.index].name
-  region    = coalesce(var.accounts[count.index].region, local.region, "datasource")
-  resource  = local.name
-  function  = local.function
-  suffix    = local.suffix
-}
-
-#
-# These values must be hardcoded. We can't use variables here.
-# https://developer.hashicorp.com/terraform/language/providers/requirements
-# https://registry.terraform.io/browse/providers
-#
-terraform {
-  required_version = ">= 1.6.1"
+  prefix   = local.proc_prefix
+  env      = local.env
+  key      = var.accounts[count.index].key
+  id       = var.accounts[count.index].id
+  name     = var.accounts[count.index].name
+  region   = coalesce(var.accounts[count.index].region, local.region, "datasource")
+  resource = local.name
+  function = local.function
+  suffix   = local.suffix
 }
