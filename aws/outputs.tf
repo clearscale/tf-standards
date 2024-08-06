@@ -11,8 +11,8 @@ output "key" {
 output "id" {
   description = "The updated account ID."
   value = (length(var.id) < 12
-    ? data.aws_caller_identity.current.account_id
-    : coalesce(tonumber(var.id), data.aws_caller_identity.current.account_id)
+    ? data.aws_caller_identity.current[0].account_id
+    : try(tonumber(var.id), data.aws_caller_identity.current[0].account_id)
   )
 }
 
